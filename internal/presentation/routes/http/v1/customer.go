@@ -14,5 +14,6 @@ func SetupCustomerRoutes(router *gin.RouterGroup) {
 		salamGroup.GET("/mobina", customer.Salam)
 	}
 
-	router.GET("/add/:num1/:num2")
+	router.GET("/add/:num1/:num2", customer.Adder)
+	router.GET("/hello", customer.SayHello)
 }
