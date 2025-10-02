@@ -43,5 +43,6 @@ func SayHello(c *gin.Context) {
 
 	res := service.SayHello(params.Name)
 
+	
 	c.String(200, res)
 }
