@@ -1,6 +1,7 @@
 package customer
 
 import (
+	"example/hona/bootstrap"
 	"example/hona/internal/application/dto/math"
 	"example/hona/internal/application/service"
 	"example/hona/internal/presentation/controller"
@@ -9,13 +10,15 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type CustomerController struct{
+type CustomerController struct {
 	mathService *service.MathService
+	constants   *bootstrap.Constants
 }
 
-func NewCustomerController(mathService *service.MathService) *CustomerController {
+func NewCustomerController(mathService *service.MathService, constants *bootstrap.Constants) *CustomerController {
 	return &CustomerController{
 		mathService: mathService,
+		constants:   constants,
 	}
 }
 
@@ -30,7 +33,7 @@ func (cc *CustomerController) Adder(c *gin.Context) {
 		Num1 int `uri:"num1" validate:"required"`
 		Num2 int `uri:"num2" validate:"required"`
 	}
-	params := controller.Validator[addParams](c)
+	params := controller.Validator[addParams](c, cc.constants)
 
 	p := math.AddRequest{
 		Num1: params.Num1,
@@ -38,20 +41,18 @@ func (cc *CustomerController) Adder(c *gin.Context) {
 	}
 	res := cc.mathService.Adder(p)
 
-	c.JSON(http.StatusOK, gin.H{
-		"your num1:":  params.Num1,
-		"your num2:":  params.Num2,
-		"num1 + num2": res,
-	})
+	translator := controller.GetTranslator(c, cc.constants.Context.Translator)
+	message, _ := translator.T("success.add")
+	controller.Response(c, 200, message, res)
 }
 
 func (cc *CustomerController) SayHello(c *gin.Context) {
 	type helloParams struct {
 		Name string `form:"name" validate:"required"`
 	}
-	params := controller.Validator[helloParams](c)
+	params := controller.Validator[helloParams](c, cc.constants)
 
-	translator := controller.GetTranslator(c, "translator")
+	translator := controller.GetTranslator(c, cc.constants.Context.Translator)
 	message, _ := translator.T("success.hello", params.Name)
 	controller.Response(c, 200, message, nil)
 }

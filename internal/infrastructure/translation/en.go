@@ -7,5 +7,6 @@ var English = map[string]interface{}{
 	},
 	"success": map[string]interface{}{
 		"hello": "hello {0}",
+		"add":   "Added successfully.",
 	},
 }

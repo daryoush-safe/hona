@@ -7,5 +7,6 @@ var Persian = map[string]interface{}{
 	},
 	"success": map[string]interface{}{
 		"hello": "سلام {0}",
+		"add":   "با موفقیت اضافه شد.",
 	},
 }

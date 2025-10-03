@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"example/hona/bootstrap"
 	"reflect"
 
 	"github.com/gin-gonic/gin"
@@ -9,10 +10,10 @@ import (
 
 var validate *validator.Validate = validator.New(validator.WithRequiredStructEnabled())
 
-func Validator[T any](c *gin.Context) T {
+func Validator[T any](c *gin.Context, constants *bootstrap.Constants) T {
 	var params T
 
-	translator := GetTranslator(c, "translator")
+	translator := GetTranslator(c, constants.Context.Translator)
 
 	if err := c.ShouldBindUri(&params); err != nil {
 		c.JSON(400, gin.H{"msg": "wrong input"})
