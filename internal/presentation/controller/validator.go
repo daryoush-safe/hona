@@ -2,6 +2,7 @@ package controller
 
 import (
 	"example/hona/bootstrap"
+	"example/hona/internal/domain/exceptions"
 	"reflect"
 
 	"github.com/gin-gonic/gin"
@@ -13,31 +14,29 @@ var validate *validator.Validate = validator.New(validator.WithRequiredStructEna
 func Validator[T any](c *gin.Context, constants *bootstrap.Constants) T {
 	var params T
 
-	translator := GetTranslator(c, constants.Context.Translator)
-
 	if err := c.ShouldBindUri(&params); err != nil {
-		c.JSON(400, gin.H{"msg": "wrong input"})
+		bindingError := exceptions.NewBindingError(err)
+		panic(bindingError)
 	}
 
 	if err := c.ShouldBind(&params); err != nil {
-		c.JSON(400, gin.H{"msg": "wrong input"})
+		bindingError := exceptions.NewBindingError(err)
+		panic(bindingError)
 	}
 
 	if err := c.ShouldBindQuery(&params); err != nil {
-		c.JSON(400, gin.H{"msg": "wrong input"})
+		bindingError := exceptions.NewBindingError(err)
+		panic(bindingError)
 	}
 
 	if err := validate.Struct(&params); err != nil {
 		validationErrors, _ := err.(validator.ValidationErrors)
-
-		messages := make(map[string]string)
+		customValidationError := exceptions.NewValidationErrors()
 		for _, err := range validationErrors {
-			tagValue := formatValidationError[T](err)
-			translatedTagValue, _ := translator.T(tagValue)
-			translatedTag, _ := translator.T("errors."+err.Tag(), translatedTagValue)
-			messages[err.Tag()] = translatedTag
+			field := formatValidationError[T](err)
+			customValidationError.AddError(field, err.Tag())
 		}
-		c.JSON(422, messages)
+		panic(customValidationError)
 	}
 
 	return params
