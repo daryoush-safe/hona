@@ -4,7 +4,6 @@ import (
 	"reflect"
 
 	"github.com/gin-gonic/gin"
-	ut "github.com/go-playground/universal-translator"
 	"github.com/go-playground/validator/v10"
 )
 
@@ -13,8 +12,7 @@ var validate *validator.Validate = validator.New(validator.WithRequiredStructEna
 func Validator[T any](c *gin.Context) T {
 	var params T
 
-	trans, _ := c.Get("translator")
-	translator := trans.(ut.Translator)
+	translator := GetTranslator(c, "translator")
 
 	if err := c.ShouldBindUri(&params); err != nil {
 		c.JSON(400, gin.H{"msg": "wrong input"})

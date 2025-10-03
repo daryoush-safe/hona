@@ -5,4 +5,7 @@ var English = map[string]interface{}{
 	"errors": map[string]interface{}{
 		"required": "The {0} is required.",
 	},
+	"success": map[string]interface{}{
+		"hello": "hello {0}",
+	},
 }
