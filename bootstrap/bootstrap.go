@@ -2,11 +2,12 @@ package bootstrap
 
 type Config struct {
 	Constants *Constants
-	// Add other configuration fields as needed
+	Env       *Env
 }
 
 func Run() *Config {
 	return &Config{
 		Constants: NewConstants(),
+		Env:       NewEnv(),
 	}
 }

@@ -68,5 +68,5 @@ func (rm *RecoveryMiddleware) unhandledErrors(c *gin.Context, err error) {
 
 	translator := controller.GetTranslator(c, rm.constants.Context.Translator)
 	message, _ := translator.T("errors.generic")
-	controller.Response(c, 400, message, nil)
+	controller.Response(c, 500, message, nil)
 }
