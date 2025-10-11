@@ -6,7 +6,13 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func Localization(c *gin.Context) {
+type LocalizationMiddleware struct{}
+
+func NewLocalizationMiddleware() *LocalizationMiddleware {
+	return &LocalizationMiddleware{}
+}
+
+func (lm *LocalizationMiddleware) Localization(c *gin.Context) {
 	locale := c.Request.Header.Get("Accept-Language")
 	if locale == "" {
 		locale = "fa_IR"

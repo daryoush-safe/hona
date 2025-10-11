@@ -11,8 +11,9 @@ import (
 func Run(ginEngine *gin.Engine) {
 	config := bootstrap.Run()
 	recovery := middleware.NewRecoveryMiddleware(config.Constants)
+	localization := middleware.NewLocalizationMiddleware()
 
-	ginEngine.Use(middleware.Localization)
+	ginEngine.Use(localization.Localization)
 	ginEngine.Use(recovery.Recovery)
 
 	v1 := ginEngine.Group("/v1")
