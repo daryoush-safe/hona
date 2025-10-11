@@ -37,6 +37,8 @@ func (rm *RecoveryMiddleware) handleRecoveredError(c *gin.Context, err error) {
 		rm.handleBindingError(c, bindingError)
 	} else if validationErrors, ok := err.(*exceptions.ValidationErrors); ok {
 		rm.handleValidationErrors(c, validationErrors)
+	} else if _, ok := err.(*exceptions.RatelimitError); ok {
+		rm.handleRatelimitError(c)
 	} else {
 		rm.unhandledErrors(c, err)
 	}
@@ -69,4 +71,8 @@ func (rm *RecoveryMiddleware) unhandledErrors(c *gin.Context, err error) {
 	translator := controller.GetTranslator(c, rm.constants.Context.Translator)
 	message, _ := translator.T("errors.generic")
 	controller.Response(c, 500, message, nil)
+}
+
+func (rm *RecoveryMiddleware) handleRatelimitError(c *gin.Context) {
+	controller.Response(c, 422, "", nil)
 }
